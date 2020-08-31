@@ -8,6 +8,52 @@ public final class TranslatorUtilities {
         // do not allow instantiating utility class
     }
 
+    public static String translateNumberToName(String number) {
+        if (number.charAt(0) == '-') {
+            return "negative " + translateNumberToName(number.substring(1));
+        }
+        if (number.matches("^0+$")) {
+            return "zero";
+        }
+        int decimalPtIndex = number.indexOf('.');
+        int nextThreeDigitsIndex = number.length();
+
+        StringBuilder builder = new StringBuilder();
+        if (decimalPtIndex != -1 && decimalPtIndex != number.length() - 1) {
+            nextThreeDigitsIndex = decimalPtIndex;
+        }
+
+        int count = 0;
+        while (nextThreeDigitsIndex > 0) {
+            String threeDigits = number.substring(Math.max(nextThreeDigitsIndex - 3, 0), nextThreeDigitsIndex);
+            String threeDigitsName =  threeDigitNumberToName(threeDigits);
+            if (!threeDigitsName.isEmpty()) {
+                if (count > 0) {
+                    if (builder.length() > 0) {
+                        builder.insert(0, " ");
+                    }
+                    builder.insert(0, powerOfThousandToName(count));
+                    builder.insert(0, " ");
+                }
+                builder.insert(0, threeDigitsName);
+            }
+            nextThreeDigitsIndex = nextThreeDigitsIndex - 3;
+            ++count;
+        }
+
+        if (decimalPtIndex != -1 && decimalPtIndex != number.length() - 1) {
+            if (builder.length() == 0) {
+                builder.append("zero");
+            }
+            builder.append(" point");
+            for (int i = decimalPtIndex + 1; i < number.length(); ++i) {
+                builder.append(" ");
+                builder.append(digitToName("" + number.charAt(i)));
+            }
+        }
+        return builder.toString();
+    }
+
     protected static String threeDigitNumberToName(String number) {
         String threeDigitNumber = number;
         if (number.length() == 1) {
@@ -45,6 +91,55 @@ public final class TranslatorUtilities {
         }
 
         return String.join(" ", nameParts);
+    }
+
+    private static String powerOfThousandToName(int power) {
+        // names taken from Powers of 10 Wikipedia page: https://en.wikipedia.org/wiki/Power_of_10
+        switch (power) {
+            case 1:
+                return "thousand";
+            case 2:
+                return "million";
+            case 3:
+                return "billion";
+            case 4:
+                return "trillion";
+            case 5:
+                return "quadrillion";
+            case 6:
+                return "quintillion";
+            case 7:
+                return "sextillion";
+            case 8:
+                return "septillion";
+            case 9:
+                return "octillion";
+            case 10:
+                return "nonillion";
+            case 11:
+                return "decillion";
+            case 12:
+                return "undecillion";
+            case 13:
+                return "duidecillion";
+            case 14:
+                return "tredecillion";
+            case 15:
+                return "quattuordecillion";
+            case 16:
+                return "quindecillion";
+            case 17:
+                return "sexdecillion";
+            case 18:
+                return "septdecillion";
+            case 19:
+                return "octodecillion";
+            case 20:
+                return "novemdecillion";
+            case 21:
+                return "vigintillion";
+        }
+        return "";
     }
 
     private static String teensNumberToName(String teen) {
@@ -99,6 +194,8 @@ public final class TranslatorUtilities {
 
     private static String digitToName(String digit) {
         switch (digit) {
+            case "0":
+                return "zero";
             case "1":
                 return "one";
             case "2":

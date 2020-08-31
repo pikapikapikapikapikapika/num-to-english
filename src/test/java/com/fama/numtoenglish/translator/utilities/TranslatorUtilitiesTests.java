@@ -6,6 +6,67 @@ import org.junit.jupiter.api.Test;
 public class TranslatorUtilitiesTests {
 
     @Test
+    public void testTranslateNumberToNameZero() {
+        String result = TranslatorUtilities.translateNumberToName("0");
+        Assert.assertEquals("translating 0 returns zero", "zero", result);
+        result = TranslatorUtilities.translateNumberToName("00");
+        Assert.assertEquals("translating 00 returns zero", "zero", result);
+    }
+
+    @Test
+    public void testTranslateNumberToNamePowersOfThousand() {
+        String result = TranslatorUtilities.translateNumberToName("1000");
+        Assert.assertEquals("translating 1000 resolves correctly", "one thousand", result);
+
+        result = TranslatorUtilities.translateNumberToName("1000000");
+        Assert.assertEquals("translating 1000000 resolves correctly", "one million", result);
+
+        result = TranslatorUtilities.translateNumberToName("1000000000");
+        Assert.assertEquals("translating 1000000000 resolves correctly", "one billion", result);
+
+        result = TranslatorUtilities.translateNumberToName("1000000000000");
+        Assert.assertEquals("translating 1000000000000 resolves correctly", "one trillion", result);
+    }
+
+    @Test
+    public void testTranslateNumberToNameWithOnesInAllDigits() {
+        String result = TranslatorUtilities.translateNumberToName("111111111111");
+        Assert.assertEquals(
+                "translating 111111111111 resolves correctly",
+                "one hundred eleven billion one hundred eleven million one hundred eleven thousand one hundred eleven",
+                result
+        );
+    }
+
+    @Test
+    public void testTranslateNumberToNameDecimalPts() {
+        String result = TranslatorUtilities.translateNumberToName(".1");
+        Assert.assertEquals("translating .1 resolves correctly", "zero point one", result);
+
+        result = TranslatorUtilities.translateNumberToName(".0");
+        Assert.assertEquals("translating .1 resolves correctly", "zero point zero", result);
+
+        result = TranslatorUtilities.translateNumberToName(".12345");
+        Assert.assertEquals("translating .12345 resolves correctly", "zero point one two three four five", result);
+
+        result = TranslatorUtilities.translateNumberToName("111.12345");
+        Assert.assertEquals("translating 111.12345 resolves correctly", "one hundred eleven point one two three four five", result);
+    }
+
+    @Test
+    public void testTranslateNumberToNameNegative() {
+        String result = TranslatorUtilities.translateNumberToName("-1");
+        Assert.assertEquals("translating -1 resolves correctly", "negative one", result);
+
+        result = TranslatorUtilities.translateNumberToName("-.1");
+        Assert.assertEquals("translating .1 resolves correctly", "negative zero point one", result);
+
+
+        result = TranslatorUtilities.translateNumberToName("-1000000");
+        Assert.assertEquals("translating -1000000 resolves correctly", "negative one million", result);
+    }
+
+    @Test
     public void testThreeDigitNumberToNameZero() {
         // we expect empty string because if the number has a "000" at any step of 1000, we should exclude the "zero"
         // e.g. 1000 = one thousand, not one thousand zero,
